@@ -15,10 +15,8 @@ export class PCustomElement extends HTMLElement {
 
   waitUntilConnected(callback: () => void) {
     if (!this.isReallyConnected) {
-      console.log(`put cb in queue: ${callback}`);
       this.connectedCallbackWaiters.push(callback);
     } else {
-      console.log(`component connected, running cb immediately: ${callback}`);
       callback();
     }
   }

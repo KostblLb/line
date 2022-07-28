@@ -1,6 +1,17 @@
+import { mat4, vec3 } from "gl-matrix";
 import { Scene } from "./lib/scene";
 import { Canvas } from "./ui/canvas";
-import { CameraSliders } from "./ui/controls/cameraSliders";
+import { UIConfig } from "./ui/config";
+import {
+  CameraSliders,
+  CameraSlidersChangedValue,
+} from "./ui/controls/cameraSliders";
+import { Mat4Control } from "./ui/controls/mat4Control";
+import {
+  ProjectionChangedValue,
+  ProjectionSliders,
+} from "./ui/controls/projectionSliders";
+
 console.log(Canvas);
 
 export class App extends HTMLElement {
@@ -9,38 +20,49 @@ export class App extends HTMLElement {
   constructor() {
     super();
 
+    const config = UIConfig.load();
+
     this.attachShadow({ mode: "open" });
 
     const div = document.createElement("div");
-    const sliders = document.createElement(String(CameraSliders));
+    const cameraSliders = document.createElement(String(CameraSliders));
 
-    console.log("created");
+    const projectionSliders = document.createElement(String(ProjectionSliders));
+
+    const mat4Control = document.createElement(String(Mat4Control));
+    mat4Control.addEventListener("yolo-input", (event) =>
+      (canvas as Canvas).setCamera((event as CustomEvent).detail as mat4)
+    );
+
     const canvas = document.createElement("p-canvas");
-    div.append(sliders, canvas);
-    console.log("appended");
+    div.append(cameraSliders, projectionSliders, mat4Control);
+    div.style.position = "absolute";
 
-    this.shadowRoot?.appendChild(div);
+    this.shadowRoot?.append(div, canvas);
 
-    // sliders.addEventListener(CameraSliders.EVENT_CAMERA_CHANGED, ((
-    //   event: CustomEvent<CameraSlidersChangedEventValue>
-    // ) => {
-    //   const { x, y, z } = event.detail;
-    //   canvas.setAttribute("modelviewx", x);
-    //   canvas.setAttribute("modelviewy", y);
-    //   canvas.setAttribute("modelviewz", z);
-    // }) as EventListener);
+    cameraSliders.addEventListener(CameraSliders.EVENT_CAMERA_CHANGED, ((
+      event: CustomEvent<CameraSlidersChangedValue>
+    ) => {
+      const rot = mat4.create();
+      const { rotx, roty, rotz, offset } = event.detail;
+      mat4.rotateX(rot, rot, rotx);
+      mat4.rotateY(rot, rot, roty);
+      mat4.rotateZ(rot, rot, rotz);
+      mat4.translate(rot, rot, vec3.fromValues(0, 0, Number(offset ?? 0)));
 
-    const anim = (timestamp: number) => {
-      const sec = timestamp / 1000;
-      canvas.setAttribute("modelviewx", String(0.2 + Math.sin(sec) / 10000));
-      canvas.setAttribute("modelvuewx", String("0.23"));
-      canvas.setAttribute("modelviewy", String(Math.cos(sec)));
-      canvas.setAttribute("modelvuewz", String(1));
-      //canvas.setAttribute("modelviewz", String((sec % 1000) / 1000));
+      (canvas as Canvas).setCamera(rot);
 
-      window.requestAnimationFrame(anim);
-    };
-    window.requestAnimationFrame(anim);
+      UIConfig.save({
+        camera: event.detail,
+      });
+    }) as EventListener);
+
+    projectionSliders.addEventListener(
+      ProjectionSliders.EVENT_PROJECTION_CHANGED,
+      ((event: CustomEvent<ProjectionChangedValue>) => {
+        (canvas as Canvas).setProjection(event.detail);
+      }) as EventListener
+    );
 
     this.scene = new Scene();
   }
@@ -50,18 +72,55 @@ export class App extends HTMLElement {
   }
 
   initScene() {
-    this.scene.objects.push({
-      id: "cube",
+    const scene = this.getScene();
+    this.scene = scene;
+
+    const config = UIConfig.load();
+
+    const canvas = this.shadowRoot?.querySelector("p-canvas") as Canvas;
+    canvas.waitUntilConnected(() => canvas.setScene(this.scene));
+
+    if (config) {
+      (
+        this.shadowRoot?.querySelector(String(CameraSliders)) as CameraSliders
+      ).setCamera(config.camera);
+      const cameraMat = mat4.create();
+      mat4.rotateX(cameraMat, cameraMat, +config.camera.rotx);
+      mat4.rotateY(cameraMat, cameraMat, +config.camera.roty);
+      mat4.rotateZ(cameraMat, cameraMat, +config.camera.rotz);
+      mat4.translate(
+        cameraMat,
+        cameraMat,
+        vec3.fromValues(0, 0, +config.camera.offset)
+      );
+      console.log(cameraMat);
+      canvas.waitUntilConnected(() => canvas.setCamera(cameraMat));
+    }
+  }
+
+  getScene() {
+    const scene = new Scene();
+    scene.objects.push({
+      id: "cube1",
+      model: "cube",
       offset: {
-        x: 0.4,
-        y: 0.3,
+        x: 0,
+        y: 0,
         z: 0,
       },
     });
 
-    const canvas = this.shadowRoot?.querySelector("p-canvas") as Canvas;
-    console.log("setting scene");
-    canvas.waitUntilConnected(() => canvas.setScene(this.scene));
+    scene.objects.push({
+      id: "cube2",
+      model: "cube",
+      offset: {
+        x: 1.5,
+        y: 0,
+        z: 0,
+      },
+    });
+
+    return scene;
   }
 }
 

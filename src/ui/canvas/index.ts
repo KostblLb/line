@@ -110,9 +110,9 @@ export class Canvas extends PCustomElement {
       const vao = gl.createVertexArray();
       gl.bindVertexArray(vao);
 
-      const model = this.models.get(obj.id);
+      const model = this.models.get(obj.model);
       if (!model) {
-        throw new Error(`Model use in scene not found: ${obj.id}`);
+        throw new Error(`Model use in scene not found: ${obj.model}`);
       }
 
       // Setting up the VBO
@@ -137,11 +137,20 @@ export class Canvas extends PCustomElement {
         0
       );
 
-      // gl.uniformMatrix4fv(
-      //   program?.uniformLocations?.uModelView ?? -1,
-      //   false,
-      //   this.modelView
-      // );
+      const projection = mat4.create();
+      mat4.perspective(
+        projection,
+        0.5,
+        gl.canvas.width / gl.canvas.height,
+        -1.2,
+        1000
+      );
+
+      gl.uniformMatrix4fv(
+        this.currentProgram?.uniformLocations?.uProjection ?? -1,
+        true,
+        projection
+      );
 
       // Setting up the IBO
       const squareIndexBuffer = gl.createBuffer();
@@ -175,7 +184,7 @@ export class Canvas extends PCustomElement {
     const fragmentShader = await (await fetch(demoFrag)).text();
 
     const gl = this.getGLContext();
-    gl.clearDepth(100);
+    gl.clearDepth(1);
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
 
@@ -184,7 +193,7 @@ export class Canvas extends PCustomElement {
       vertexShader,
       fragmentShader,
       attribs: ["aVertexPosition"],
-      uniforms: ["uModelView", "uCameraView"],
+      uniforms: ["uModelView", "uCameraView", "uProjection"],
     });
     this.currentProgram = program;
   }
@@ -232,38 +241,32 @@ export class Canvas extends PCustomElement {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
   }
 
+  setProjection(projection: mat4) {
+    this.getGLContext().uniformMatrix4fv(
+      this.currentProgram?.uniformLocations?.uProjection ?? -1,
+      true,
+      projection ?? mat4.create()
+    );
+
+    this.viewParamsChanged();
+  }
+
+  setCamera(camera: mat4) {
+    const m = mat4.create();
+    mat4.invert(m, camera);
+    this.getGLContext().uniformMatrix4fv(
+      this.currentProgram?.uniformLocations?.uCameraView ?? -1,
+      false,
+      m ?? mat4.create()
+    );
+
+    this.viewParamsChanged();
+  }
+
   private viewParamsChanged() {
     if (!this.currentProgram) {
       return;
     }
-
-    /* пересадить на кватернионы? */
-    const newCameraView = mat4.create();
-    mat4.rotateX(
-      newCameraView,
-      newCameraView,
-      Number(this.getAttribute("modelviewx"))
-    );
-
-    mat4.rotateY(
-      newCameraView,
-      newCameraView,
-      Number(this.getAttribute("modelviewy"))
-    );
-
-    mat4.rotateZ(
-      newCameraView,
-      newCameraView,
-      Number(this.getAttribute("modelviewz"))
-    );
-
-    this.cameraView = newCameraView;
-    this.getGLContext().uniformMatrix4fv(
-      this.currentProgram?.uniformLocations?.uCameraView ?? -1,
-      false,
-      this.cameraView
-    );
-
     this.draw();
   }
 }

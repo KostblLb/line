@@ -1,10 +1,8 @@
-import { mat4 } from "gl-matrix";
-
 export type CameraConfig = {
-  rotx: string;
-  roty: string;
-  rotz: string;
-  offset: string;
+  rotx: string | number;
+  roty: string | number;
+  rotz: string | number;
+  offset: string | number;
 };
 
 type UIConfigType = {

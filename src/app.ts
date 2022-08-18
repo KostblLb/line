@@ -24,18 +24,28 @@ export class App extends HTMLElement {
 
     this.attachShadow({ mode: "open" });
 
+    const canvas = document.createElement("p-canvas");
+
     const div = document.createElement("div");
     const cameraSliders = document.createElement(String(CameraSliders));
 
     const projectionSliders = document.createElement(String(ProjectionSliders));
+    projectionSliders.style.display = "none";
 
     const mat4Control = document.createElement(String(Mat4Control));
     mat4Control.addEventListener("yolo-input", (event) =>
       (canvas as Canvas).setCamera((event as CustomEvent).detail as mat4)
     );
 
-    const canvas = document.createElement("p-canvas");
-    div.append(cameraSliders, projectionSliders, mat4Control);
+    const selectedId = document.createElement("span");
+    canvas.addEventListener(Canvas.OBJECT_CLICKED_EVENT, ((
+      event: CustomEvent<number>
+    ) => {
+      console.log(event);
+      selectedId.textContent = String(event.detail);
+    }) as EventListener);
+
+    div.append(cameraSliders, projectionSliders, mat4Control, selectedId);
     div.style.position = "absolute";
 
     this.shadowRoot?.append(div, canvas);
@@ -57,12 +67,12 @@ export class App extends HTMLElement {
       });
     }) as EventListener);
 
-    projectionSliders.addEventListener(
-      ProjectionSliders.EVENT_PROJECTION_CHANGED,
-      ((event: CustomEvent<ProjectionChangedValue>) => {
-        (canvas as Canvas).setProjection(event.detail);
-      }) as EventListener
-    );
+    // projectionSliders.addEventListener(
+    //   ProjectionSliders.EVENT_PROJECTION_CHANGED,
+    //   ((event: CustomEvent<ProjectionChangedValue>) => {
+    //     (canvas as Canvas).setProjection(event.detail);
+    //   }) as EventListener
+    // );
 
     this.scene = new Scene();
   }

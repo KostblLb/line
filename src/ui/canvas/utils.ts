@@ -28,6 +28,12 @@ export const compileShader = (
   return shader;
 };
 
+export type Program<A extends {}, U extends {}> = {
+  program: WebGLProgram;
+  attribLocations: { [K in keyof A]: number };
+  uniformLocations: { [K in keyof U]: WebGLUniformLocation | null };
+};
+
 export const makeProgram = <A extends {}, U extends {}>({
   gl,
   vertexShader,
@@ -40,7 +46,7 @@ export const makeProgram = <A extends {}, U extends {}>({
   fragmentShader: string;
   attribs: (keyof A)[];
   uniforms: (keyof U)[];
-}) => {
+}): Program<A, U> | null => {
   // Create a program
   const program = gl.createProgram();
   if (!program) {
@@ -65,11 +71,6 @@ export const makeProgram = <A extends {}, U extends {}>({
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
     console.error("Could not initialize shaders");
   }
-
-  // Use this program instance
-  gl.useProgram(program);
-  // We attach the location of these shader values to the program instance
-  // for easy access later in the code
 
   const attribLocations = attribs.reduce((acc, cur) => {
     acc[cur] = gl.getAttribLocation(program, cur as string);

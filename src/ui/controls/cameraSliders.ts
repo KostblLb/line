@@ -1,5 +1,4 @@
-import { mat4, quat, vec3, vec4 } from "gl-matrix";
-import { CameraConfig, UIConfig } from "../config";
+import { CameraConfig } from "../config";
 
 export type CameraSlidersChangedValue = {
   rotx: number;
@@ -89,10 +88,10 @@ export class CameraSliders extends HTMLElement {
   }
 
   setCamera(camera: CameraConfig) {
-    this.setInputValue(CameraSliders.ATTR_ROT_X, camera.rotx);
-    this.setInputValue(CameraSliders.ATTR_ROT_Y, camera.roty);
-    this.setInputValue(CameraSliders.ATTR_ROT_Z, camera.rotz);
-    this.setInputValue(CameraSliders.ATTR_OFFSET, camera.offset);
+    this.setInputValue(CameraSliders.ATTR_ROT_X, String(camera.rotx));
+    this.setInputValue(CameraSliders.ATTR_ROT_Y, String(camera.roty));
+    this.setInputValue(CameraSliders.ATTR_ROT_Z, String(camera.rotz));
+    this.setInputValue(CameraSliders.ATTR_OFFSET, String(camera.offset));
   }
 }
 

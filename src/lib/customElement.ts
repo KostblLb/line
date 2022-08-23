@@ -6,6 +6,8 @@ export class PCustomElement extends HTMLElement {
     super();
   }
 
+  protected connectedCallback() {}
+
   protected runConnectedCallbacks() {
     this.isReallyConnected = true;
     for (const cb of this.connectedCallbackWaiters) {

@@ -38,6 +38,7 @@ export class CameraSliders extends HTMLElement {
       const input = document.createElement("input");
       input.setAttribute("data-attr", attr);
       input.type = "range";
+      input.value = "0";
       input.max =
         attr === CameraSliders.ATTR_OFFSET ? "10" : String(Math.PI * 2);
       input.min = CameraSliders.ATTR_OFFSET ? "-10" : String(-Math.PI * 2);

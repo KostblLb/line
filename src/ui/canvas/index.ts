@@ -104,9 +104,9 @@ export class Canvas extends PCustomElement {
 
     this.setupCommonResources();
 
-    this.setupProjection();
-
     await this.setupPrograms();
+
+    this.setupProjection();
 
     this.getGLContext().useProgram(this.programs.drawing!.program);
 
@@ -144,6 +144,8 @@ export class Canvas extends PCustomElement {
       const { width, height } = entries[entries.length - 1].contentRect;
       this.canvas.width = width;
       this.canvas.height = height;
+      this.setupProjection();
+      this.viewParamsChanged();
     };
     const observer = new ResizeObserver(resizeCallback);
     observer.observe(this.canvas);
@@ -348,7 +350,7 @@ export class Canvas extends PCustomElement {
         sceneObj.modelView
       );
 
-      const colorId = 2 ** i;
+      const colorId = i + 1;
       gl.uniform3fv(this.programs.offscreen?.uniformLocations?.uIdColor ?? -1, [
         colorId & (0xff0000 << 16),
         colorId & (0xff00 << 8),
@@ -373,6 +375,8 @@ export class Canvas extends PCustomElement {
 
   private setupProjection() {
     const gl = this.getGLContext();
+    const currentProg = gl.getParameter(gl.CURRENT_PROGRAM);
+
     this.projection = mat4.create();
     mat4.perspective(
       this.projection,
@@ -381,15 +385,22 @@ export class Canvas extends PCustomElement {
       -1.2,
       1000
     );
-  }
 
-  setProjection(projection: mat4) {
-    // this.getGLContext().uniformMatrix4fv(
-    //   this.programs.drawing?.uniformLocations?.uProjection ?? -1,
-    //   true,
-    //   projection ?? mat4.create()
-    // );
-    // this.viewParamsChanged();
+    for (const prog of [this.programs.drawing, this.programs.offscreen]) {
+      if (!prog) {
+        break;
+      }
+
+      gl.useProgram(prog!.program);
+
+      this.getGLContext().uniformMatrix4fv(
+        prog!.uniformLocations?.uProjection ?? -1,
+        true,
+        this.projection ?? mat4.create()
+      );
+    }
+
+    gl.useProgram(currentProg);
   }
 
   setCamera(camera: mat4) {

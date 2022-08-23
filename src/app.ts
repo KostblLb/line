@@ -1,5 +1,6 @@
 import { mat4, vec3 } from "gl-matrix";
 import { Scene } from "./lib/scene";
+import { Model } from "./models/types";
 import { Canvas } from "./ui/canvas";
 import { UIConfig } from "./ui/config";
 import {
@@ -7,10 +8,7 @@ import {
   CameraSlidersChangedValue,
 } from "./ui/controls/cameraSliders";
 import { Mat4Control } from "./ui/controls/mat4Control";
-import {
-  ProjectionChangedValue,
-  ProjectionSliders,
-} from "./ui/controls/projectionSliders";
+import { ObjectGallery } from "./ui/controls/objectGallery";
 
 console.log(Canvas);
 
@@ -29,23 +27,32 @@ export class App extends HTMLElement {
     const div = document.createElement("div");
     const cameraSliders = document.createElement(String(CameraSliders));
 
-    const projectionSliders = document.createElement(String(ProjectionSliders));
-    projectionSliders.style.display = "none";
-
     const mat4Control = document.createElement(String(Mat4Control));
     mat4Control.addEventListener("yolo-input", (event) =>
       (canvas as Canvas).setCamera((event as CustomEvent).detail as mat4)
     );
+    mat4Control.style.display = "none";
 
     const selectedId = document.createElement("span");
     canvas.addEventListener(Canvas.OBJECT_CLICKED_EVENT, ((
       event: CustomEvent<number>
     ) => {
-      console.log(event);
-      selectedId.textContent = String(event.detail);
+      selectedId.textContent = "Selected: " + String(event.detail);
     }) as EventListener);
 
-    div.append(cameraSliders, projectionSliders, mat4Control, selectedId);
+    const gallery = document.createElement(String(ObjectGallery));
+    gallery.addEventListener(ObjectGallery.SELECT_OBJECT_EVENT, ((
+      event: CustomEvent<Model>
+    ) => {
+      this.scene.add(event.detail.name, {
+        x: Math.random() * 10 - 5,
+        y: Math.random() * 10 - 5,
+        z: Math.random() * 10 - 5,
+      });
+      (canvas as Canvas).setScene(this.scene);
+    }) as EventListener);
+
+    div.append(cameraSliders, mat4Control, selectedId, gallery);
     div.style.position = "absolute";
 
     this.shadowRoot?.append(div, canvas);
@@ -67,13 +74,6 @@ export class App extends HTMLElement {
       });
     }) as EventListener);
 
-    // projectionSliders.addEventListener(
-    //   ProjectionSliders.EVENT_PROJECTION_CHANGED,
-    //   ((event: CustomEvent<ProjectionChangedValue>) => {
-    //     (canvas as Canvas).setProjection(event.detail);
-    //   }) as EventListener
-    // );
-
     this.scene = new Scene();
   }
 
@@ -82,8 +82,7 @@ export class App extends HTMLElement {
   }
 
   initScene() {
-    const scene = this.getScene();
-    this.scene = scene;
+    this.scene.load();
 
     const config = UIConfig.load();
 
@@ -103,34 +102,8 @@ export class App extends HTMLElement {
         cameraMat,
         vec3.fromValues(0, 0, +config.camera.offset)
       );
-      console.log(cameraMat);
       canvas.waitUntilConnected(() => canvas.setCamera(cameraMat));
     }
-  }
-
-  getScene() {
-    const scene = new Scene();
-    scene.objects.push({
-      id: "cube1",
-      model: "cube",
-      offset: {
-        x: 0,
-        y: 0,
-        z: 0,
-      },
-    });
-
-    scene.objects.push({
-      id: "cube2",
-      model: "cube",
-      offset: {
-        x: 1.5,
-        y: 0,
-        z: 0,
-      },
-    });
-
-    return scene;
   }
 }
 

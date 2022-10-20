@@ -1,5 +1,6 @@
 import { mat4, vec3 } from "gl-matrix";
 import { Scene } from "./lib/scene";
+import "./lib/sceneExtensions";
 import { Model } from "./models/types";
 import { Canvas } from "./ui/canvas";
 import { UIConfig } from "./ui/config";
@@ -44,12 +45,15 @@ export class App extends HTMLElement {
     gallery.addEventListener(ObjectGallery.SELECT_OBJECT_EVENT, ((
       event: CustomEvent<Model>
     ) => {
-      this.scene.add(event.detail.name, {
-        x: Math.random() * 10 - 5,
-        y: Math.random() * 10 - 5,
-        z: Math.random() * 10 - 5,
-      });
-      (canvas as Canvas).setScene(this.scene);
+      if (event.detail.name === "cube") {
+        this.scene.createBox({
+          position: {
+            x: Math.random() * 10 - 5,
+            y: Math.random() * 10 - 5,
+            z: Math.random() * 10 - 5,
+          },
+        });
+      }
     }) as EventListener);
 
     div.append(cameraSliders, mat4Control, selectedId, gallery);
@@ -68,6 +72,7 @@ export class App extends HTMLElement {
       mat4.translate(rot, rot, vec3.fromValues(0, 0, Number(offset ?? 0)));
 
       (canvas as Canvas).setCamera(rot);
+      (canvas as Canvas).setScene(this.scene);
 
       UIConfig.save({
         camera: event.detail,

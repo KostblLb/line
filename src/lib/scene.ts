@@ -1,26 +1,16 @@
-import { Point } from "./point";
-import { uid } from "./utils";
-
-export type SceneObject = {
-  id: string;
-  model: string;
-  offset: Point;
-};
+import { TransformComponentProps } from "./components/transform";
+import { SceneObject } from "./sceneObject";
 
 export class Scene {
   objects: SceneObject[] = [];
 
-  add(model: string, offset: Point) {
-    const id = uid();
-    this.objects.push({
-      id,
-      model,
-      offset,
-    });
+  create() {
+    const object = new SceneObject();
+    this.objects.push(object);
 
     this.save();
 
-    return id;
+    return object;
   }
 
   save() {
@@ -30,4 +20,6 @@ export class Scene {
   load() {
     this.objects = JSON.parse(localStorage.getItem("scene") ?? "[]");
   }
+
+  createBox(transformProps: TransformComponentProps) {}
 }

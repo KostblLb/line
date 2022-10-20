@@ -1,14 +1,16 @@
 window.globalResources = {};
 
-export const configureGlobalResources = (
-  resources: Record<string, () => Promise<any>>
+export const configureGlobalResources = async (
+  resources: Array<Record<string, () => Promise<any>>>
 ) => {
-  Object.keys(resources).forEach(async (k) => {
-    try {
-      const resolvedResource = await resources[k]();
-      window.globalResources[k] = resolvedResource;
-    } catch (ex) {
-      console.log(ex);
+  for (let entry of resources) {
+    for (let k of Object.keys(entry)) {
+      try {
+        const resolvedResource = await entry[k]();
+        window.globalResources[k] = resolvedResource;
+      } catch (ex) {
+        console.log(ex);
+      }
     }
-  });
+  }
 };

@@ -8,11 +8,11 @@ const positionIterations = 1;
  */
 const step = (deltaMs: number) => {
   const clampedDeltaMs = Math.min(deltaMs, maxTimeStepMs);
-  window.globalResources.physicsWorld.Step(
-    clampedDeltaMs / 1000,
-    velocityIterations,
-    positionIterations
-  );
+  // window.globalResources.physicsWorld.Step(
+  //   clampedDeltaMs / 1000,
+  //   velocityIterations,
+  //   positionIterations
+  // );
 };
 
 export const startLoop = () => {

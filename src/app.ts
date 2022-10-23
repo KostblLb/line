@@ -1,6 +1,7 @@
+import "reflect-metadata";
 import { mat4, vec3 } from "gl-matrix";
+import { inject, injectable } from "inversify";
 import { Scene } from "./lib/scene";
-import "./lib/sceneExtensions";
 import { Model } from "./models/types";
 import { Canvas } from "./ui/canvas";
 import { UIConfig } from "./ui/config";
@@ -13,10 +14,13 @@ import { ObjectGallery } from "./ui/controls/objectGallery";
 
 console.log(Canvas);
 
+@injectable()
 export class App extends HTMLElement {
-  scene!: Scene;
+  static toString() {
+    return "p-app";
+  }
 
-  constructor() {
+  constructor(@inject(Scene) private scene: Scene) {
     super();
 
     const config = UIConfig.load();
@@ -46,12 +50,12 @@ export class App extends HTMLElement {
       event: CustomEvent<Model>
     ) => {
       if (event.detail.name === "cube") {
-        this.scene.createBox({
+        this.scene.createBox2D({
           position: {
             x: Math.random() * 10 - 5,
             y: Math.random() * 10 - 5,
-            z: Math.random() * 10 - 5,
           },
+          rotation: 1,
         });
       }
     }) as EventListener);
@@ -78,8 +82,6 @@ export class App extends HTMLElement {
         camera: event.detail,
       });
     }) as EventListener);
-
-    this.scene = new Scene();
   }
 
   connectedCallback() {
@@ -112,4 +114,4 @@ export class App extends HTMLElement {
   }
 }
 
-customElements.define("p-app", App);
+customElements.define(App.toString(), App);

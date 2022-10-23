@@ -1,24 +1,28 @@
+import { Point } from "../point";
+import { SceneObject } from "../sceneObject";
 import { Component } from "./component";
 
-export type PhysicsBoxComponentProps = {
+export type PhysicsBox2DComponentProps = {
+  box2d: typeof Box2D;
+  world: Box2D.b2World;
   sideLength?: number;
+  position?: Point;
+  // angle
+  rotation?: number;
 };
 
-export class PhysicsBoxComponent extends Component {
+export class PhysicsBox2DComponent extends Component {
   public sideLength?: number;
   public world: Box2D.b2World;
   private body: Box2D.b2Body;
 
-  constructor(public props: PhysicsBoxComponentProps) {
-    super("Physics");
+  constructor(parent: SceneObject, public props: PhysicsBox2DComponentProps) {
+    super(parent, "Physics");
 
-    this.world = window.globalResources.physicsWorld;
+    const { world, box2d } = props;
+    this.world = world;
 
-    // INLINE DEMO CODE PLS REMOVE ME
-    const box2d = window.globalResources.box2d as typeof Box2D;
-
-    const { b2BodyDef, b2_dynamicBody, b2PolygonShape, b2Vec2, b2World } =
-      box2d;
+    const { b2BodyDef, b2_dynamicBody, b2PolygonShape, b2Vec2 } = box2d;
 
     // in metres per second squared
 
@@ -33,7 +37,10 @@ export class PhysicsBoxComponent extends Component {
 
     const body = this.world.CreateBody(bd);
     body.CreateFixture(square, 1);
-    body.SetTransform(zero, 0);
+    body.SetTransform(
+      new b2Vec2(props.position?.x ?? 0, props.position?.y ?? 0),
+      props.rotation ?? 0
+    );
     body.SetLinearVelocity(zero);
     body.SetAwake(true);
     body.SetEnabled(true);
@@ -47,5 +54,13 @@ export class PhysicsBoxComponent extends Component {
       position,
       rotation,
     };
+  }
+
+  toString(): string {
+    return JSON.stringify({
+      name: this.name,
+      uid: this.uid,
+      ...this.transform,
+    });
   }
 }

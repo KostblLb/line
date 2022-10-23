@@ -9,7 +9,9 @@ import { PCustomElement } from "../../lib/customElement";
 import demoVert from "../../shaders/basic/vertex.vert";
 import demoFrag from "../../shaders/basic/fragment.frag";
 import clickDetectionFrag from "../../shaders/clickDetection/fragment.frag";
+
 import demoModel from "../../models/demo.json";
+import { ModelComponent } from "../../lib/components/model";
 
 // it paints the Scene
 
@@ -156,7 +158,10 @@ export class Canvas extends PCustomElement {
     this.models.set(name, { verts, indices });
   }
 
+  // TODO will be called on each addition \ removal from scene objects. WILL GET SLOWER
   setScene(scene: Scene) {
+    console.log(scene);
+
     const gl = this.getGLContext();
     this.scene = scene;
 
@@ -171,12 +176,20 @@ export class Canvas extends PCustomElement {
       );
 
       for (const obj of scene.objects) {
+        const modelComponent = obj.findComponentByClass(ModelComponent);
+
+        if (!modelComponent) {
+          continue;
+        }
+
         const vao = gl.createVertexArray();
         gl.bindVertexArray(vao);
 
-        const model = this.models.get(obj.model);
+        const model = this.models.get(modelComponent.modelName);
         if (!model) {
-          throw new Error(`Model use in scene not found: ${obj.model}`);
+          throw new Error(
+            `Model use in scene not found: ${modelComponent.modelName}`
+          );
         }
 
         // Setting up the VBO
@@ -210,9 +223,12 @@ export class Canvas extends PCustomElement {
           gl.STATIC_DRAW
         );
 
+        const {
+          offset: { x, y, z },
+        } = modelComponent;
         const modelView = mat4.fromTranslation(
           new Float32Array(16),
-          vec3.fromValues(obj.offset.x, obj.offset.y, obj.offset.z)
+          vec3.fromValues(x, y, z)
         );
 
         this.sceneObjects.set(obj.id, {

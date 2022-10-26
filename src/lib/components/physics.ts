@@ -1,6 +1,7 @@
 import { Point } from "../point";
 import { SceneObject } from "../sceneObject";
 import { Component } from "./component";
+import * as utils from "../../lib/utils";
 
 export type PhysicsBox2DComponentProps = {
   box2d: typeof Box2D;
@@ -13,18 +14,19 @@ export type PhysicsBox2DComponentProps = {
 
 export class PhysicsBox2DComponent extends Component {
   public sideLength?: number;
-  public world: Box2D.b2World;
-  private body: Box2D.b2Body;
+  private world!: Box2D.b2World;
+  private body!: Box2D.b2Body;
 
-  constructor(parent: SceneObject, public props: PhysicsBox2DComponentProps) {
+  constructor(parent: SceneObject) {
     super(parent, "Physics");
+  }
+
+  init(props: PhysicsBox2DComponentProps, uid?: string) {
+    Reflect.set(this, "uid", uid ?? utils.uid());
 
     const { world, box2d } = props;
-    this.world = world;
 
     const { b2BodyDef, b2_dynamicBody, b2PolygonShape, b2Vec2 } = box2d;
-
-    // in metres per second squared
 
     const square = new b2PolygonShape();
     square.SetAsBox(props.sideLength ?? 1 / 2, props.sideLength ?? 1 / 2);
@@ -45,6 +47,7 @@ export class PhysicsBox2DComponent extends Component {
     body.SetAwake(true);
     body.SetEnabled(true);
 
+    this.world = world;
     this.body = body;
   }
 

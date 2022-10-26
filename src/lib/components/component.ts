@@ -1,18 +1,14 @@
 import { SceneObject } from "../sceneObject";
-import { uid } from "../utils";
 
-export class Component {
-  readonly uid: string = uid();
+export abstract class Component {
+  readonly uid!: string;
 
   constructor(
     protected parent: SceneObject,
     public readonly name: string = "Component"
   ) {}
 
-  toString() {
-    return JSON.stringify({
-      name: this.name,
-      uid: this.uid,
-    });
-  }
+  abstract toString(): string;
+
+  abstract init(props: any, uid?: string): void; // needed to initialize readonly uid
 }

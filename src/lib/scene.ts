@@ -3,14 +3,17 @@ import { inject, injectable } from "inversify";
 import { PhysicsComponentFactory } from "./components/factory/physicsComponentFactory";
 import { ModelComponent } from "./components/model";
 import { SceneObject } from "./sceneObject";
-import { Point, Point2 } from "./point";
-import { quat } from "gl-matrix";
+import { Point2 } from "./point";
+import { ModelComponentFactory } from "./components/factory/modelComponentFactory";
 
 @injectable()
 export class Scene {
   constructor(
     @inject(PhysicsComponentFactory)
-    private physicsComponentFactory: PhysicsComponentFactory
+    private physicsComponentFactory: PhysicsComponentFactory,
+
+    @inject(ModelComponentFactory)
+    private modelComponentFactory: ModelComponentFactory
   ) {}
 
   objects: SceneObject[] = [];
@@ -34,10 +37,12 @@ export class Scene {
 
   createBox2D({ position, rotation }: { position: Point2; rotation: number }) {
     const obj = this.create();
-    const cubeModelComponent = new ModelComponent(obj, {
+    const cubeModelComponent = this.modelComponentFactory.createComponent(obj, {
       modelName: "cube",
     });
-    const physicsComponent = this.physicsComponentFactory.createComponent(obj);
+    const physicsComponent = this.physicsComponentFactory.createComponent(obj, {
+      sideLength: 10,
+    });
 
     obj.components.push(cubeModelComponent);
     obj.components.push(physicsComponent);

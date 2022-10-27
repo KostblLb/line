@@ -1,4 +1,4 @@
-import { Point } from "../point";
+import { Point2 } from "../point";
 import { SceneObject } from "../sceneObject";
 import { Component } from "./component";
 import * as utils from "../../lib/utils";
@@ -7,7 +7,7 @@ export type PhysicsBox2DComponentProps = {
   box2d: typeof Box2D;
   world: Box2D.b2World;
   sideLength?: number;
-  position?: Point;
+  position?: Point2;
   // angle
   rotation?: number;
 };
@@ -37,7 +37,7 @@ export class PhysicsBox2DComponent extends Component {
     bd.set_type(b2_dynamicBody);
     bd.set_position(zero);
 
-    const body = this.world.CreateBody(bd);
+    const body = world.CreateBody(bd);
     body.CreateFixture(square, 1);
     body.SetTransform(
       new b2Vec2(props.position?.x ?? 0, props.position?.y ?? 0),
@@ -49,12 +49,13 @@ export class PhysicsBox2DComponent extends Component {
 
     this.world = world;
     this.body = body;
+    this.sideLength = props.sideLength;
   }
 
   get transform() {
     const { p: position, q: rotation } = this.body.GetTransform();
     return {
-      position,
+      position: { x: position.x, y: position.y },
       rotation,
     };
   }

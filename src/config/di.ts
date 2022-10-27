@@ -20,11 +20,14 @@ container
   )
   .inSingletonScope();
 
-container.bind<Box2D.b2World>("Box2D.b2World").toDynamicValue(async (context) =>
-  context.container.getAsync<typeof Box2D>("Box2D").then((box2d) => {
-    return new box2d.b2World(10);
-  })
-);
+container
+  .bind<Box2D.b2World>("Box2D.b2World")
+  .toDynamicValue(async (context) =>
+    context.container.getAsync<typeof Box2D>("Box2D").then((box2d) => {
+      return new box2d.b2World(10);
+    })
+  )
+  .inSingletonScope();
 
 container.bind<App>(App).toSelf();
 

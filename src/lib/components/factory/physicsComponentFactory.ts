@@ -39,5 +39,7 @@ export class PhysicsComponentFactory {
       },
       uid
     );
+
+    return comp;
   }
 }

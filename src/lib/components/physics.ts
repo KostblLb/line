@@ -13,12 +13,14 @@ export type PhysicsBox2DComponentProps = {
 };
 
 export class PhysicsBox2DComponent extends Component {
+  static Name: "Physics";
+
   public sideLength?: number;
   private world!: Box2D.b2World;
   private body!: Box2D.b2Body;
 
   constructor(parent: SceneObject) {
-    super(parent, "Physics");
+    super(parent, PhysicsBox2DComponent.Name);
   }
 
   init(props: PhysicsBox2DComponentProps, uid?: string) {
@@ -60,11 +62,11 @@ export class PhysicsBox2DComponent extends Component {
     };
   }
 
-  toString(): string {
-    return JSON.stringify({
+  toJSON() {
+    return {
       name: this.name,
       uid: this.uid,
       ...this.transform,
-    });
+    };
   }
 }

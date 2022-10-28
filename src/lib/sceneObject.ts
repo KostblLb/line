@@ -2,16 +2,13 @@ import { Component } from "./components/component";
 import { uid } from "./utils";
 
 export class SceneObject {
-  id: string = uid();
+  readonly uid: string = uid();
   components: Component[] = [];
 
-  toString() {
-    return JSON.stringify({
-      id: this.id,
-      components: Array.from(this.components.entries()).map(([comp]) =>
-        comp.toString()
-      ),
-    });
+  constructor() {}
+
+  init(uid: string) {
+    Reflect.set(this, "uid", uid);
   }
 
   findComponentByUid(uid: string) {
@@ -26,5 +23,22 @@ export class SceneObject {
     klass: new (...args: any[]) => T
   ): T | undefined {
     return this.components.find((comp) => comp instanceof klass) as T;
+  }
+
+  toString() {
+    return JSON.stringify({
+      uid: this.uid,
+      components: Array.from(this.components.entries()).map(([idx, comp]) => ({
+        uid: comp.uid,
+        name: comp.name,
+      })),
+    });
+  }
+
+  toJSON() {
+    return {
+      uid: this.uid,
+      components: this.components,
+    };
   }
 }

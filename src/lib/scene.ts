@@ -1,10 +1,10 @@
 import "reflect-metadata";
 import { inject, injectable } from "inversify";
 import { PhysicsComponentFactory } from "./components/factory/physicsComponentFactory";
-import { ModelComponent } from "./components/model";
 import { SceneObject } from "./sceneObject";
 import { Point2 } from "./point";
 import { ModelComponentFactory } from "./components/factory/modelComponentFactory";
+import { ComponentFactoryFactory } from "./components/factory/factoryFactory";
 
 @injectable()
 export class Scene {
@@ -13,7 +13,10 @@ export class Scene {
     private physicsComponentFactory: PhysicsComponentFactory,
 
     @inject(ModelComponentFactory)
-    private modelComponentFactory: ModelComponentFactory
+    private modelComponentFactory: ModelComponentFactory,
+
+    @inject(ComponentFactoryFactory)
+    private componentFactoryFactory: ComponentFactoryFactory
   ) {}
 
   objects: SceneObject[] = [];
@@ -32,7 +35,22 @@ export class Scene {
   }
 
   load() {
-    this.objects = JSON.parse(localStorage.getItem("scene") ?? "[]");
+    this.objects = [];
+    const sceneStr = localStorage.getItem("scene");
+    if (sceneStr) {
+      const sceneJson = JSON.parse(sceneStr) as ISerializedScene;
+      sceneJson.objects.forEach((objJson) => {
+        const object = new SceneObject();
+        object.init(objJson.uid);
+        objJson.components.forEach((compJson) => {
+          const compFactory = this.componentFactoryFactory.getFactory(
+            compJson.name
+          );
+          const comp = compFactory.createComponentFromJSON(object, compJson);
+          object.components.push(comp);
+        });
+      });
+    }
   }
 
   createBox2D({ position, rotation }: { position: Point2; rotation: number }) {
@@ -42,6 +60,8 @@ export class Scene {
     });
     const physicsComponent = this.physicsComponentFactory.createComponent(obj, {
       sideLength: 10,
+      position,
+      rotation,
     });
 
     obj.components.push(cubeModelComponent);

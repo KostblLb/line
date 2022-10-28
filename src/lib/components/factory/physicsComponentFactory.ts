@@ -25,8 +25,8 @@ export class PhysicsComponentFactory {
     return comp;
   }
 
-  createComponentFromString(parent: SceneObject, str: string) {
-    const { sideLength, position, rotation, uid } = JSON.parse(str);
+  createComponentFromJSON(parent: SceneObject, json: any) {
+    const { sideLength, position, rotation, uid } = json;
 
     const comp = new PhysicsBox2DComponent(parent);
     comp.init(

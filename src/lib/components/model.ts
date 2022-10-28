@@ -24,12 +24,12 @@ export class ModelComponent extends Component {
     this.offset = props.offset ?? { x: 0, y: 0, z: 0 };
   }
 
-  toString(): string {
-    return JSON.stringify({
+  toJSON() {
+    return {
       uid: this.uid,
       name: this.name,
       modelName: this.modelName,
       offset: this.offset,
-    });
+    };
   }
 }

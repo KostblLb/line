@@ -28,13 +28,13 @@ describe("PhysicsComponentFactory", () => {
   });
 
   it("creates component from string", () => {
-    const serialized = JSON.stringify({
+    const json = {
       uid: "test",
       position: { x: 1, y: 2 },
       rotation: 90,
       sideLength: 10,
-    });
-    const comp = factory.createComponentFromString(so, serialized);
+    };
+    const comp = factory.createComponentFromJSON(so, json);
 
     expect(comp.uid).toBe("test");
     expect(comp.sideLength).toBe(10);

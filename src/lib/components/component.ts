@@ -8,7 +8,13 @@ export abstract class Component {
     public readonly name: string = "Component"
   ) {}
 
-  abstract toString(): string;
+  // JSON serialization to plain objects
+  abstract toJSON(): Object;
 
   abstract init(props: any, uid?: string): void; // needed to initialize readonly uid
+
+  // debug serialization
+  toString(): string {
+    return JSON.stringify(this, null, "\t");
+  }
 }

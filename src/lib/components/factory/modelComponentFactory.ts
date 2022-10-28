@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { injectable } from "inversify";
 import { Point } from "../../point";
 import { SceneObject } from "../../sceneObject";
@@ -16,8 +17,8 @@ export class ModelComponentFactory {
     return comp;
   }
 
-  createComponentFromString(parent: SceneObject, str: string) {
-    const { offset, modelName, uid } = JSON.parse(str);
+  createComponentFromJSON(parent: SceneObject, json: any) {
+    const { offset, modelName, uid } = json;
     const comp = new ModelComponent(parent);
 
     comp.init(

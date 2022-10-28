@@ -24,12 +24,12 @@ describe("ModelComponentFactory", () => {
   });
 
   it("creates component from string", () => {
-    const serialized = JSON.stringify({
+    const json = {
       uid: "test",
       modelName: "test",
       offset: { x: 1, y: 1, z: 1 },
-    });
-    const comp = factory.createComponentFromString(so, serialized);
+    };
+    const comp = factory.createComponentFromJSON(so, json);
 
     expect(comp.uid).toBe("test");
     expect(comp.modelName).toBe("test");

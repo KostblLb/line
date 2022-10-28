@@ -231,7 +231,7 @@ export class Canvas extends PCustomElement {
           vec3.fromValues(x, y, z)
         );
 
-        this.sceneObjects.set(obj.id, {
+        this.sceneObjects.set(obj.uid, {
           vao,
           modelView,
           indicesLength: model.indices.length,
@@ -309,9 +309,9 @@ export class Canvas extends PCustomElement {
     // bind its vao, draw elements based on indices
 
     this.scene!.objects.forEach((obj, i) => {
-      const sceneObj = this.sceneObjects.get(obj.id);
+      const sceneObj = this.sceneObjects.get(obj.uid);
       if (!sceneObj) {
-        throw new Error(`Scene object not found during draw: ${obj.id}`);
+        throw new Error(`Scene object not found during draw: ${obj.uid}`);
       }
 
       gl.uniformMatrix4fv(
@@ -355,9 +355,9 @@ export class Canvas extends PCustomElement {
     // bind its vao, draw elements based on indices
 
     this.scene!.objects.forEach((obj, i) => {
-      const sceneObj = this.sceneObjects.get(obj.id);
+      const sceneObj = this.sceneObjects.get(obj.uid);
       if (!sceneObj) {
-        throw new Error(`Scene object not found during draw: ${obj.id}`);
+        throw new Error(`Scene object not found during draw: ${obj.uid}`);
       }
 
       gl.uniformMatrix4fv(

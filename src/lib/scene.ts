@@ -30,8 +30,14 @@ export class Scene {
     return object;
   }
 
+  toJSON() {
+    return {
+      objects: this.objects,
+    };
+  }
+
   save() {
-    localStorage.setItem("scene", JSON.stringify(this.objects));
+    localStorage.setItem("scene", JSON.stringify(this));
   }
 
   load() {
@@ -49,6 +55,7 @@ export class Scene {
           const comp = compFactory.createComponentFromJSON(object, compJson);
           object.components.push(comp);
         });
+        this.objects.push(object);
       });
     }
   }

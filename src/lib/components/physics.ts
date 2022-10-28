@@ -13,7 +13,7 @@ export type PhysicsBox2DComponentProps = {
 };
 
 export class PhysicsBox2DComponent extends Component {
-  static Name: "Physics";
+  static Name = "Physics";
 
   public sideLength?: number;
   private world!: Box2D.b2World;
@@ -58,7 +58,7 @@ export class PhysicsBox2DComponent extends Component {
     const { p: position, q: rotation } = this.body.GetTransform();
     return {
       position: { x: position.x, y: position.y },
-      rotation,
+      rotation: rotation.GetAngle(),
     };
   }
 
@@ -66,6 +66,7 @@ export class PhysicsBox2DComponent extends Component {
     return {
       name: this.name,
       uid: this.uid,
+      sideLength: this.sideLength,
       ...this.transform,
     };
   }

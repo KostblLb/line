@@ -27,6 +27,7 @@ const copyStaticAssets = () => {
 };
 
 const options: BuildOptions = {
+  logLevel: "info",
   format: "esm",
   entryPoints: ["./src/index.ts"],
   write: true,

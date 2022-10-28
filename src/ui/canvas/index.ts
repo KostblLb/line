@@ -160,8 +160,7 @@ export class Canvas extends PCustomElement {
 
   // TODO will be called on each addition \ removal from scene objects. WILL GET SLOWER
   setScene(scene: Scene) {
-    console.log(scene);
-
+    console.log("set scene " + JSON.stringify(scene));
     const gl = this.getGLContext();
     this.scene = scene;
 
@@ -176,9 +175,11 @@ export class Canvas extends PCustomElement {
       );
 
       for (const obj of scene.objects) {
+        console.log(obj);
         const modelComponent = obj.findComponentByClass(ModelComponent);
 
         if (!modelComponent) {
+          console.log("skipping", obj);
           continue;
         }
 

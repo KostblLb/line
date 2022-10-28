@@ -3,10 +3,7 @@ import { SceneObject } from "../sceneObject";
 export abstract class Component {
   readonly uid!: string;
 
-  constructor(
-    protected parent: SceneObject,
-    public readonly name: string = "Component"
-  ) {}
+  constructor(protected parent: SceneObject, public readonly name: string) {}
 
   // JSON serialization to plain objects
   abstract toJSON(): Object;

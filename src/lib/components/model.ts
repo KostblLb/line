@@ -1,7 +1,7 @@
 import { Point } from "../point";
 import { SceneObject } from "../sceneObject";
 import { Component } from "./component";
-import * as utils from "../../lib/utils";
+import * as utils from "../utils";
 
 export type ModelComponentProps = {
   modelName: string;
@@ -21,6 +21,7 @@ export class ModelComponent extends Component {
   init(props: ModelComponentProps, uid?: string) {
     Reflect.set(this, "uid", uid ?? utils.uid());
     Reflect.set(this, "modelName", props.modelName);
+
     this.offset = props.offset ?? { x: 0, y: 0, z: 0 };
   }
 

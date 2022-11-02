@@ -43,8 +43,8 @@ const options: BuildOptions = {
     "process.versions": '""', // если не оставить пустым, box2d импортер думает, что мы билдим для ноды
   },
   loader: {
-    ".frag": "file",
-    ".vert": "file",
+    ".frag": "text",
+    ".vert": "text",
   },
 };
 

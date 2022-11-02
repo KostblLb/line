@@ -1,3 +1,5 @@
+// todo move from ui??
+
 export const compileShader = (
   gl: WebGLRenderingContext,
   shaderString: string,

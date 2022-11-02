@@ -5,6 +5,8 @@ import { SceneObject } from "./sceneObject";
 import { Point2 } from "./point";
 import { ModelComponentFactory } from "./components/factory/modelComponentFactory";
 import { ComponentFactoryFactory } from "./components/factory/factoryFactory";
+import { GenericComponentFactory } from "./components/factory/genericComponentFactory";
+import { TransformComponent } from "./components/transform";
 
 @injectable()
 export class Scene {
@@ -14,6 +16,9 @@ export class Scene {
 
     @inject(ModelComponentFactory)
     private modelComponentFactory: ModelComponentFactory,
+
+    @inject(GenericComponentFactory)
+    private genericComponentFactory: GenericComponentFactory,
 
     @inject(ComponentFactoryFactory)
     private componentFactoryFactory: ComponentFactoryFactory
@@ -71,8 +76,18 @@ export class Scene {
       rotation,
     });
 
+    const transformComponent = this.genericComponentFactory.createComponent(
+      obj,
+      TransformComponent,
+      {
+        position,
+        rotation,
+      }
+    );
+
     obj.components.push(cubeModelComponent);
     obj.components.push(physicsComponent);
+    obj.components.push(transformComponent);
 
     this.save();
   }

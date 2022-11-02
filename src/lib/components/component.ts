@@ -1,4 +1,5 @@
 import { SceneObject } from "../sceneObject";
+import * as utils from "../utils";
 
 export abstract class Component {
   readonly uid!: string;

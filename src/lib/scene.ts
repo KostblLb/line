@@ -72,14 +72,18 @@ export class Scene {
 
   createBox2D({ position, rotation }: { position: Point2; rotation: number }) {
     const obj = this.create();
+
     const cubeModelComponent = this.modelComponentFactory.createComponent(obj, {
       modelName: "cube",
     });
+    obj.components.push(cubeModelComponent);
+
     const physicsComponent = this.physicsComponentFactory.createComponent(obj, {
       sideLength: 10,
       position,
       rotation,
     });
+    obj.components.push(physicsComponent);
 
     const transformComponent = this.genericComponentFactory.createComponent(
       obj,
@@ -89,9 +93,6 @@ export class Scene {
         rotation,
       }
     );
-
-    obj.components.push(cubeModelComponent);
-    obj.components.push(physicsComponent);
     obj.components.push(transformComponent);
 
     const rendererComponent = this.rendererComponentFactory.createComponent(

@@ -47,7 +47,8 @@ export class PhysicsBox2DComponent extends Component {
     );
     body.SetLinearVelocity(zero);
     body.SetAwake(true);
-    body.SetEnabled(true);
+
+    body.SetEnabled(false);
 
     this.world = world;
     this.body = body;

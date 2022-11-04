@@ -29,7 +29,6 @@ export class SceneRendererLifecycle implements ILifecycle {
       for (const obj of this.scene.objects) {
         const renderer = obj.findComponentByClass(RendererComponent);
         if (renderer?.material) {
-          console.info("rendering", renderer.material);
           dev.render(renderer.material);
         }
       }

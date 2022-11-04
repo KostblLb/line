@@ -1,4 +1,4 @@
-import "webgl-lint"; // will crash if you import it
+//import "webgl-lint"; // will crash if you import it
 
 import { App } from "./app";
 import container from "./config/di";

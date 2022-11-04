@@ -17,6 +17,7 @@ export class RendererComponent extends Component {
 
   toJSON(): Object {
     return {
+      name: this.name,
       uid: this.uid,
       material: Object.getPrototypeOf(this.material).constructor.name,
     };

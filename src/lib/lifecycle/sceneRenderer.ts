@@ -1,57 +1,38 @@
 import "reflect-metadata";
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
 import { Scene } from "../scene";
 import { RendererComponent } from "../components/renderer";
-import { Program } from "../../ui/canvas/utils";
+import { IDevice } from "../../ui/canvas/device";
 
 @injectable()
 export class SceneRendererLifecycle implements ILifecycle {
-  private devices: WebGL2RenderingContext[] = [];
-  private compiledShaders = new Map<
-    WebGL2RenderingContext,
-    Map<string, Program<any, any>>
-  >();
-  constructor(private scene: Scene) {}
+  private devices: IDevice[] = [];
+  constructor(@inject(Scene) private scene: Scene) {}
 
-  addDevice(gl: WebGL2RenderingContext) {
-    if (!this.compiledShaders.has(gl)) {
-      this.compiledShaders.set(gl, new Map());
-    }
-    const deviceShaders = this.compiledShaders.get(gl)!;
+  addDevice(dev: IDevice) {
+    console.info("Adding device", dev);
 
-    this.scene.objects.forEach((obj) => {
+    for (const obj of this.scene.objects) {
       const renderer = obj.findComponentByClass(RendererComponent);
       if (renderer) {
-        const matName = Object.getPrototypeOf(renderer.material).constructor
-          .name; /// ???
-        const compiled = deviceShaders.has(matName);
-        if (!compiled) {
-          return;
-        }
-        const prog = renderer.material.addDevice(gl);
-        deviceShaders.set(matName, prog);
+        dev.compileMaterial(renderer.material);
       }
-    });
+    }
+
+    this.devices.push(dev);
   }
 
   step(deltaMs: number) {
-    this.devices.forEach((dev) => {
-      this.scene.objects.forEach((obj) => {
+    for (const dev of this.devices) {
+      dev.clear();
+
+      for (const obj of this.scene.objects) {
         const renderer = obj.findComponentByClass(RendererComponent);
         if (renderer?.material) {
-          const matName = Object.getPrototypeOf(renderer.material).constructor
-            .name; /// ???
-
-          let shader = this.compiledShaders.get(dev)?.get(matName);
-          if (!shader) {
-            if (!this.compiledShaders.has(dev)) {
-              this.compiledShaders.set(dev, new Map());
-            }
-            shader = renderer.material.addDevice(dev);
-            this.compiledShaders.get(dev)?.set(matName, shader);
-          }
+          console.info("rendering", renderer.material);
+          dev.render(renderer.material);
         }
-      });
-    });
+      }
+    }
   }
 }

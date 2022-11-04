@@ -1,8 +1,5 @@
 import { PCustomElement } from "../../lib/customElement";
 
-import demoModel from "../../models/demo.json";
-import { Model } from "../../models/types";
-
 /**
  * Галерея моделей для вставки в сцену
  */
@@ -39,21 +36,23 @@ export class ObjectGallery extends PCustomElement {
   }
 
   private async loadObjects() {
-    const objects = await Promise.resolve([demoModel]);
+    const objects = await Promise.resolve([{ name: "cube" }]);
 
     this.listContainer.append(...objects.map((obj) => this.makeListItem(obj)));
   }
 
-  private makeListItem(obj: Model) {
+  private makeListItem(obj: { name: string }) {
     const listItem = document.createElement("div");
     listItem.textContent = obj.name;
     listItem.onclick = () => this.onSelectListItem(obj);
     return listItem;
   }
 
-  private onSelectListItem(obj: Model) {
+  private onSelectListItem(obj: { name: string }) {
     this.dispatchEvent(
-      new CustomEvent<Model>(ObjectGallery.SELECT_OBJECT_EVENT, { detail: obj })
+      new CustomEvent<{ name: string }>(ObjectGallery.SELECT_OBJECT_EVENT, {
+        detail: obj,
+      })
     );
   }
 }

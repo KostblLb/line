@@ -90,16 +90,16 @@ export class Scene {
       }
     );
 
+    obj.components.push(cubeModelComponent);
+    obj.components.push(physicsComponent);
+    obj.components.push(transformComponent);
+
     const rendererComponent = this.rendererComponentFactory.createComponent(
       obj,
       {
         material: new BasicMaterial(obj),
       }
     );
-
-    obj.components.push(cubeModelComponent);
-    obj.components.push(physicsComponent);
-    obj.components.push(transformComponent);
     obj.components.push(rendererComponent);
 
     this.save();

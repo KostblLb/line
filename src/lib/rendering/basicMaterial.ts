@@ -9,6 +9,8 @@ import vertSource from "../../shaders/basic/vertex.vert";
 import { SceneObject } from "../sceneObject";
 
 export class BasicMaterial implements IMaterial {
+  readonly name = "BasicMaterial";
+
   private component!: ModelComponent; // dependency from concrete class, is it bad?
 
   constructor(sceneObject: SceneObject) {
@@ -19,21 +21,10 @@ export class BasicMaterial implements IMaterial {
     this.component = modelComponent;
   }
 
-  addDevice(glContext: WebGL2RenderingContext) {
-    const program = makeProgram({
-      gl: glContext,
-      fragmentShader: fragSource,
-      vertexShader: vertSource,
-      attribs: ["aVertexPosition"],
-      uniforms: ["uModelView", "uGlobCameraView", "uGlobProjection"],
-    });
-
-    if (!program) {
-      throw new Error("Cannot add render target, program not created");
-    }
-
-    return program;
-  }
+  shaderDecl = {
+    vertSource,
+    fragSource,
+  };
 
   getParametersValues() {
     const transform =
@@ -64,15 +55,23 @@ export class BasicMaterial implements IMaterial {
       : mat4.create();
 
     return {
-      attribs: {
-        aVertexPosition: {
-          indices: this.component.data.indices,
-          verts: this.component.data.verts,
+      attribs: [
+        {
+          type: "vao" as const,
+          name: "aVertexPosition",
+          value: {
+            indices: this.component.data.indices,
+            verts: this.component.data.verts,
+          },
         },
-      },
-      uniforms: {
-        uModelView: modelView,
-      },
+      ],
+      uniforms: [
+        {
+          name: "uModelView",
+          type: "mat4" as const,
+          value: modelView,
+        },
+      ],
     };
   }
 }

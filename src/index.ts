@@ -1,9 +1,10 @@
-//import "webgl-lint"; // will crash if you import it
+import "webgl-lint"; // will crash if you import it
 
 import { App } from "./app";
 import container from "./config/di";
 import { RequestAnimationFrameLoop } from "./lib/lifecycle/loops/requestAnimationFrameLoop";
 import { PhysicsLifecycle } from "./lib/lifecycle/physics";
+import { SceneRendererLifecycle } from "./lib/lifecycle/sceneRenderer";
 
 (async () => {
   const app = await container.getAsync(App);
@@ -11,8 +12,12 @@ import { PhysicsLifecycle } from "./lib/lifecycle/physics";
 
   const rafLoop = await container.getAsync(RequestAnimationFrameLoop);
   const physLifecycle = await container.getAsync(PhysicsLifecycle);
+  const sceneRendererLifecycle = await container.getAsync(
+    SceneRendererLifecycle
+  );
 
   rafLoop.add(physLifecycle);
+  rafLoop.add(sceneRendererLifecycle);
 
   rafLoop.start();
 })();

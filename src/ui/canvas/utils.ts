@@ -36,19 +36,15 @@ export type Program<A extends {}, U extends {}> = {
   uniformLocations: { [K in keyof U]: WebGLUniformLocation | null };
 };
 
-export const makeProgram = <A extends {}, U extends {}>({
+export const makeProgram = ({
   gl,
   vertexShader,
   fragmentShader,
-  attribs,
-  uniforms,
 }: {
   gl: WebGLRenderingContext;
   vertexShader: string;
   fragmentShader: string;
-  attribs: (keyof A)[];
-  uniforms: (keyof U)[];
-}): Program<A, U> | null => {
+}): WebGLProgram | null => {
   // Create a program
   const program = gl.createProgram();
   if (!program) {
@@ -74,19 +70,5 @@ export const makeProgram = <A extends {}, U extends {}>({
     console.error("Could not initialize shaders");
   }
 
-  const attribLocations = attribs.reduce((acc, cur) => {
-    acc[cur] = gl.getAttribLocation(program, cur as string);
-    return acc;
-  }, {} as { [K in keyof A]: number });
-
-  const uniformLocations = uniforms.reduce((acc, cur) => {
-    acc[cur] = gl.getUniformLocation(program, cur as string);
-    return acc;
-  }, {} as { [K in keyof U]: WebGLUniformLocation | null });
-
-  return {
-    program,
-    attribLocations,
-    uniformLocations,
-  };
+  return program;
 };

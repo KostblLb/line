@@ -1,10 +1,30 @@
-import type { Program } from "../../ui/canvas/utils";
+import { mat4 } from "gl-matrix";
+
+export type MaterialAttribParameter = {
+  name: string;
+  type: "vao";
+  value: {
+    verts: number[];
+    indices: number[];
+  };
+};
+
+export type MaterialUniformParameter = {
+  name: string;
+  type: "mat4";
+  value: mat4;
+};
 
 export interface IMaterial {
-  addDevice(device: WebGL2RenderingContext): Program<any, any>;
+  name: string;
+
+  shaderDecl: {
+    vertSource: string;
+    fragSource: string;
+  };
 
   getParametersValues(): {
-    attribs: Record<string, any>;
-    uniforms: Record<string, any>;
+    attribs: MaterialAttribParameter[];
+    uniforms: MaterialUniformParameter[];
   };
 }

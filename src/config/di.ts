@@ -4,6 +4,8 @@ import "reflect-metadata";
 import { App } from "../app";
 import { RequestAnimationFrameLoop } from "../lib/lifecycle/loops/requestAnimationFrameLoop";
 import { PhysicsLifecycle } from "../lib/lifecycle/physics";
+import { SceneRendererLifecycle } from "../lib/lifecycle/sceneRenderer";
+import { Scene } from "../lib/scene";
 
 const container = new Container({
   autoBindInjectable: true,
@@ -31,7 +33,9 @@ container
   .inSingletonScope();
 
 container.bind(RequestAnimationFrameLoop).toSelf();
-container.bind(PhysicsLifecycle).toSelf();
+container.bind(PhysicsLifecycle).toSelf().inSingletonScope();
+container.bind(SceneRendererLifecycle).toSelf().inSingletonScope();
+container.bind(Scene).toSelf().inSingletonScope();
 
 container.bind<App>(App).toSelf();
 

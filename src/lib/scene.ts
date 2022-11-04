@@ -7,6 +7,8 @@ import { ModelComponentFactory } from "./components/factory/modelComponentFactor
 import { ComponentFactoryFactory } from "./components/factory/factoryFactory";
 import { GenericComponentFactory } from "./components/factory/genericComponentFactory";
 import { TransformComponent } from "./components/transform";
+import { RendererComponentFactory } from "./components/factory/rendererComponentFactory";
+import { BasicMaterial } from "./rendering/basicMaterial";
 
 @injectable()
 export class Scene {
@@ -21,7 +23,10 @@ export class Scene {
     private genericComponentFactory: GenericComponentFactory,
 
     @inject(ComponentFactoryFactory)
-    private componentFactoryFactory: ComponentFactoryFactory
+    private componentFactoryFactory: ComponentFactoryFactory,
+
+    @inject(RendererComponentFactory)
+    private rendererComponentFactory: RendererComponentFactory
   ) {}
 
   objects: SceneObject[] = [];
@@ -85,9 +90,17 @@ export class Scene {
       }
     );
 
+    const rendererComponent = this.rendererComponentFactory.createComponent(
+      obj,
+      {
+        material: new BasicMaterial(obj),
+      }
+    );
+
     obj.components.push(cubeModelComponent);
     obj.components.push(physicsComponent);
     obj.components.push(transformComponent);
+    obj.components.push(rendererComponent);
 
     this.save();
   }

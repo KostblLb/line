@@ -37,19 +37,6 @@ export class App extends HTMLElement {
     const div = document.createElement("div");
     const cameraSliders = document.createElement(String(CameraSliders));
 
-    const mat4Control = document.createElement(String(Mat4Control));
-    mat4Control.addEventListener("yolo-input", (event) =>
-      (canvas as Canvas).setCamera((event as CustomEvent).detail as mat4)
-    );
-    mat4Control.style.display = "none";
-
-    const selectedId = document.createElement("span");
-    canvas.addEventListener(Canvas.OBJECT_CLICKED_EVENT, ((
-      event: CustomEvent<number>
-    ) => {
-      selectedId.textContent = "Selected: " + String(event.detail);
-    }) as EventListener);
-
     const gallery = document.createElement(String(ObjectGallery));
     gallery.addEventListener(ObjectGallery.SELECT_OBJECT_EVENT, ((
       event: CustomEvent<Model>
@@ -65,7 +52,7 @@ export class App extends HTMLElement {
       }
     }) as EventListener);
 
-    div.append(cameraSliders, mat4Control, selectedId, gallery);
+    div.append(cameraSliders, gallery);
     div.style.position = "absolute";
 
     this.shadowRoot?.append(div, canvas);

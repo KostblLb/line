@@ -2,7 +2,7 @@ import { mat4 } from "gl-matrix";
 
 import { PCustomElement } from "../../lib/customElement";
 import type { IMaterial } from "../../lib/rendering/types";
-import type { IDevice } from "./device";
+import type { IDevice } from "../types";
 import { makeProgram } from "./utils";
 
 // it paints the Scene

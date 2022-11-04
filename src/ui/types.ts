@@ -1,4 +1,4 @@
-import { IMaterial } from "../../lib/rendering/types";
+import { IMaterial } from "../lib/rendering/types";
 
 export interface IDevice {
   compileMaterial(material: IMaterial): void;

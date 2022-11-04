@@ -2,7 +2,7 @@ import "reflect-metadata";
 import { inject, injectable } from "inversify";
 import { Scene } from "../scene";
 import { RendererComponent } from "../components/renderer";
-import { IDevice } from "../../ui/canvas/device";
+import { IDevice } from "../../ui/types";
 
 @injectable()
 export class SceneRendererLifecycle implements ILifecycle {

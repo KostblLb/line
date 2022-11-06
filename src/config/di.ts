@@ -27,7 +27,7 @@ container
   .bind<Box2D.b2World>("Box2D.b2World")
   .toDynamicValue(async (context) =>
     context.container.getAsync<typeof Box2D>("Box2D").then((box2d) => {
-      return new box2d.b2World(new box2d.b2Vec2(0, 10));
+      return new box2d.b2World(new box2d.b2Vec2(0, -10));
     })
   )
   .inSingletonScope();

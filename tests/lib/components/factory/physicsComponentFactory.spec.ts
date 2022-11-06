@@ -1,4 +1,3 @@
-import "reflect-metadata";
 import { PhysicsComponentFactory } from "src/lib/components/factory/physicsComponentFactory";
 import { SceneObject } from "src/lib/sceneObject";
 import { createMockContainer } from "tests/container";

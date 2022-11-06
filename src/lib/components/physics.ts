@@ -31,7 +31,10 @@ export class PhysicsBox2DComponent extends Component {
     const { b2BodyDef, b2_dynamicBody, b2PolygonShape, b2Vec2 } = box2d;
 
     const square = new b2PolygonShape();
-    square.SetAsBox(props.sideLength ?? 1 / 2, props.sideLength ?? 1 / 2);
+    square.SetAsBox(
+      (props.sideLength ?? 1) * 0.5,
+      (props.sideLength ?? 1) * 0.5
+    );
 
     const zero = new b2Vec2(0, 0);
 
@@ -48,7 +51,10 @@ export class PhysicsBox2DComponent extends Component {
     body.SetLinearVelocity(zero);
     body.SetAwake(true);
 
-    body.SetEnabled(false);
+    body.SetGravityScale(0);
+    body.SetEnabled(true);
+    body.SetAngularVelocity(1);
+    body.SetAngularDamping(0);
 
     this.world = world;
     this.body = body;

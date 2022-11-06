@@ -24,6 +24,9 @@ export class TransformComponent extends Component {
   init(props: TransformComponentProps, uid?: string) {
     Reflect.set(this, "uid", uid ?? utils.uid());
     this.physics = this.parent.findComponentByClass(PhysicsBox2DComponent);
+    if (props.position) {
+      this._position = { ...props.position };
+    }
   }
 
   toJSON() {
@@ -47,7 +50,7 @@ export class TransformComponent extends Component {
     const physicsTransform = this.physics?.transform;
     if (physicsTransform) {
       const rot = quat.create();
-      quat.fromEuler(rot, 0, physicsTransform.rotation, 0);
+      quat.fromEuler(rot, 0, 0, (physicsTransform.rotation / Math.PI) * 180);
       return rot;
     }
     return this._rotation;

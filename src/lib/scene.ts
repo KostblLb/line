@@ -79,7 +79,7 @@ export class Scene {
     obj.components.push(cubeModelComponent);
 
     const physicsComponent = this.physicsComponentFactory.createComponent(obj, {
-      sideLength: 10,
+      sideLength: 1,
       position,
       rotation,
     });

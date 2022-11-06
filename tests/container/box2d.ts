@@ -22,7 +22,15 @@ export const mockB2World = {
       SetTransform: jest.fn().mockImplementation((p, q) => {
         transform = { p, q };
       }),
-      GetTransform: jest.fn().mockImplementation(() => transform),
+      GetTransform: jest
+        .fn()
+        .mockImplementation(() => ({
+          ...transform,
+          q: { GetAngle: () => transform.q },
+        })),
+      SetGravityScale: jest.fn(),
+      SetAngularVelocity: jest.fn(),
+      SetAngularDamping: jest.fn(),
     };
   }),
 };

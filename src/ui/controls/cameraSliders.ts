@@ -15,6 +15,13 @@ export class CameraSliders extends HTMLElement {
   static ATTR_ROT_Z = "rotz" as const;
   static ATTR_OFFSET = "offset" as const;
 
+  static DEFAULT = {
+    [CameraSliders.ATTR_ROT_X]: 0,
+    [CameraSliders.ATTR_ROT_Y]: 0,
+    [CameraSliders.ATTR_ROT_Z]: 0,
+    [CameraSliders.ATTR_OFFSET]: -10,
+  };
+
   static EVENT_CAMERA_CHANGED = "cameraChanged";
 
   static toString() {
@@ -38,7 +45,7 @@ export class CameraSliders extends HTMLElement {
       const input = document.createElement("input");
       input.setAttribute("data-attr", attr);
       input.type = "range";
-      input.value = "0";
+      input.value = CameraSliders.DEFAULT[attr].toString();
       input.max =
         attr === CameraSliders.ATTR_OFFSET ? "10" : String(Math.PI * 2);
       input.min = CameraSliders.ATTR_OFFSET ? "-10" : String(-Math.PI * 2);

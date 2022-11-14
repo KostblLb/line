@@ -9,7 +9,6 @@ import {
   CameraSliders,
   CameraSlidersChangedValue,
 } from "./ui/controls/cameraSliders";
-import { Mat4Control } from "./ui/controls/mat4Control";
 import { ObjectGallery } from "./ui/controls/objectGallery";
 import { SceneRendererLifecycle } from "./lib/lifecycle/sceneRenderer";
 
@@ -84,12 +83,12 @@ export class App extends HTMLElement {
 
     const config = UIConfig.load();
 
+    const cameraMat = mat4.create();
     const canvas = this.shadowRoot?.querySelector("p-canvas") as Canvas;
     if (config) {
       (
         this.shadowRoot?.querySelector(String(CameraSliders)) as CameraSliders
       ).setCamera(config.camera);
-      const cameraMat = mat4.create();
       mat4.rotateX(cameraMat, cameraMat, +config.camera.rotx);
       mat4.rotateY(cameraMat, cameraMat, +config.camera.roty);
       mat4.rotateZ(cameraMat, cameraMat, +config.camera.rotz);
@@ -98,11 +97,12 @@ export class App extends HTMLElement {
         cameraMat,
         vec3.fromValues(0, 0, +config.camera.offset)
       );
-      canvas.waitUntilConnected(() => {
-        canvas.setCamera(cameraMat);
-        this.sceneRenderer.addDevice(canvas);
-      });
     }
+
+    canvas.waitUntilConnected(() => {
+      canvas.setCamera(cameraMat);
+      this.sceneRenderer.addDevice(canvas);
+    });
   }
 }
 

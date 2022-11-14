@@ -32,7 +32,7 @@ const options: BuildOptions = {
   entryPoints: ["./src/index.ts"],
   write: true,
   sourcemap: true,
-  watch: true,
+  watch: !!process.env.WATCH,
   target: "esnext",
   outfile: "./dist/bundle.js",
   minify: true,

@@ -1,7 +1,7 @@
 import { sendDiagnosticData } from "../networking/diagnostic";
 
 export const errorBoundary = <T extends (...args: any[]) => any>(fn: T) =>
-  function (this: ThisType<T>, ...args: Parameters<T>) {
+  function (this: any, ...args: Parameters<T>) {
     try {
       return fn.apply(this, args);
     } catch (error) {
@@ -10,14 +10,7 @@ export const errorBoundary = <T extends (...args: any[]) => any>(fn: T) =>
         return;
       }
       const e = error as Error;
-      sendDiagnosticData({
-        type: "error",
-        data: JSON.stringify({
-          name: e.name,
-          stack: e.stack,
-          message: e.message,
-        }),
-      });
+      sendDiagnosticData(e);
       throw error;
     }
   };

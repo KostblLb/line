@@ -5,8 +5,9 @@ import container from "./config/di";
 import { RequestAnimationFrameLoop } from "./lib/lifecycle/loops/requestAnimationFrameLoop";
 import { PhysicsLifecycle } from "./lib/lifecycle/physics";
 import { SceneRendererLifecycle } from "./lib/lifecycle/sceneRenderer";
+import { errorBoundary } from "./utils/errorBoundary";
 
-(async () => {
+errorBoundary(async () => {
   const app = await container.getAsync(App);
   document.body.appendChild(app);
 

@@ -22,6 +22,13 @@ export class BaseLoop {
   }
 
   step(deltaMs: number) {
-    this.lifecycles.forEach(errorBoundary((lc) => lc.step(deltaMs)));
+    this.lifecycles.forEach(
+      errorBoundary((lc) => {
+        if (Math.random() < 0.01) {
+          throw new Error("Oh no!");
+        }
+        lc.step(deltaMs);
+      })
+    );
   }
 }

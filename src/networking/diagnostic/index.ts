@@ -1,10 +1,18 @@
-export const sendDiagnosticData = (data: { type: string; data: string }) => {
+export const sendDiagnosticData = (err: Error) => {
   if (!__DEV__) {
     return;
   }
 
-  navigator.sendBeacon(
-    window.origin + "/diagnostic/logError",
-    JSON.stringify(data)
+  const blob = new Blob(
+    [
+      JSON.stringify({
+        name: err.name,
+        message: err.message,
+        stack: err.stack,
+      }),
+    ],
+    { type: "application/json" }
   );
+
+  navigator.sendBeacon(window.origin + "/jsdiag/logError", blob);
 };

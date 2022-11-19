@@ -15,13 +15,14 @@ const copyStaticAssets = () => {
   }
   mkdirSync(assetsPath);
   for (let asset of [
-    "node_modules/box2d-wasm/dist/es/Box2D.wasm",
-    "node_modules/box2d-wasm/dist/es/Box2D.simd.wasm",
+    { from: "node_modules/box2d-wasm/dist/es/Box2D.wasm", to: assetsPath },
+    { from: "node_modules/box2d-wasm/dist/es/Box2D.simd.wasm", to: assetsPath },
+    { from: "index.html", to: "./dist" },
   ]) {
-    const filename = path.basename(asset);
+    const filename = path.basename(asset.from);
     copyFileSync(
-      path.join(process.cwd(), asset),
-      path.join(assetsPath, filename)
+      path.join(process.cwd(), asset.from),
+      path.join(asset.to, filename)
     );
   }
 };

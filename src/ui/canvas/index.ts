@@ -80,7 +80,6 @@ export class Canvas extends PCustomElement implements IDevice {
     gl.depthFunc(gl.LEQUAL);
   }
 
-  // shiiiieeeeeeet
   matVaos = new Map<IMaterial, WebGLVertexArrayObject>();
   matPrograms = new Map<string, WebGLProgram>();
 

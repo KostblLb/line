@@ -1,3 +1,5 @@
+import { errorBoundary } from "../../../utils/errorBoundary";
+
 export class BaseLoop {
   private lifecycles: ILifecycle[] = [];
 
@@ -20,6 +22,6 @@ export class BaseLoop {
   }
 
   step(deltaMs: number) {
-    this.lifecycles.forEach((lc) => lc.step(deltaMs));
+    this.lifecycles.forEach(errorBoundary((lc) => lc.step(deltaMs)));
   }
 }

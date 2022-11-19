@@ -39,8 +39,9 @@ const options: BuildOptions = {
   keepNames: true,
   bundle: true,
   define: {
+    __DEV__: "true",
     "process.env.NODE_ENV": '"development"',
-    "process.versions": '""', // если не оставить пустым, box2d импортер думает, что мы билдим для ноды
+    "process.versions": '""', // box2d importer thinks we're building for Node if this is not unset
   },
   loader: {
     ".frag": "text",

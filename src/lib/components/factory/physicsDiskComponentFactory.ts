@@ -1,10 +1,13 @@
 import "reflect-metadata";
 import { inject, injectable } from "inversify";
-import { PhysicsBox2DComponent, PhysicsBox2DComponentProps } from "../physics";
+import {
+  PhysicsDiskComponentProps,
+  PhysicsDiskComponent,
+} from "../physicsDisk";
 import { SceneObject } from "../../sceneObject";
 
 @injectable()
-export class PhysicsComponentFactory {
+export class PhysicsDiskComponentFactory {
   constructor(
     @inject("Box2D.b2World") private world: Box2D.b2World,
     @inject("Box2D") private box2d: typeof Box2D
@@ -12,9 +15,9 @@ export class PhysicsComponentFactory {
 
   createComponent(
     parent: SceneObject,
-    props: Omit<PhysicsBox2DComponentProps, "box2d" | "world">
+    props: Omit<PhysicsDiskComponentProps, "box2d" | "world">
   ) {
-    const comp = new PhysicsBox2DComponent(parent);
+    const comp = new PhysicsDiskComponent(parent);
 
     comp.init({
       ...props,
@@ -26,14 +29,14 @@ export class PhysicsComponentFactory {
   }
 
   createComponentFromJSON(parent: SceneObject, json: any) {
-    const { sideLength, position, rotation, uid } = json;
+    const { radius, position, rotation, uid } = json;
 
-    const comp = new PhysicsBox2DComponent(parent);
+    const comp = new PhysicsDiskComponent(parent);
     comp.init(
       {
         position,
         rotation,
-        sideLength: Number(sideLength),
+        radius: Number(radius),
         world: this.world,
         box2d: this.box2d,
       },

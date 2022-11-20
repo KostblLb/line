@@ -2,8 +2,8 @@ import { quat } from "gl-matrix";
 import { Point } from "../point";
 import { SceneObject } from "../sceneObject";
 import { Component } from "./component";
-import { PhysicsBox2DComponent } from "./physics";
 import * as utils from "../utils";
+import { isTransformSource, ITransformSource } from "./types";
 
 export type TransformComponentProps = {
   position?: Point;
@@ -13,7 +13,7 @@ export type TransformComponentProps = {
 export class TransformComponent extends Component {
   static Name = "Transform";
 
-  private physics?: PhysicsBox2DComponent;
+  private source?: ITransformSource;
   private _position: Point = { x: 0, y: 0, z: 0 };
   private _rotation: quat = quat.create();
 
@@ -23,7 +23,11 @@ export class TransformComponent extends Component {
 
   init(props: TransformComponentProps, uid?: string) {
     Reflect.set(this, "uid", uid ?? utils.uid());
-    this.physics = this.parent.findComponentByClass(PhysicsBox2DComponent);
+    this.source = this.parent.findComponent(
+      (c) => isTransformSource(c)
+
+      // TODO fix type
+    ) as any as ITransformSource;
     if (props.position) {
       this._position = { ...props.position };
     }
@@ -39,18 +43,20 @@ export class TransformComponent extends Component {
   }
 
   get position() {
-    const physicsTransform = this.physics?.transform;
-    if (physicsTransform) {
-      return { ...physicsTransform.position, z: 0 }; // fix for 3d physics
+    const sourceTransform = this.source?.transform;
+    if (sourceTransform) {
+      return { ...sourceTransform.position, z: 0 }; // fix for 3d physics
     }
     return this._position;
   }
 
   get rotation() {
-    const physicsTransform = this.physics?.transform;
-    if (physicsTransform) {
+    const sourceTransform = this.source?.transform;
+    if (sourceTransform) {
       const rot = quat.create();
-      quat.fromEuler(rot, 0, 0, (physicsTransform.rotation / Math.PI) * 180);
+      typeof sourceTransform.rotation === "number"
+        ? quat.fromEuler(rot, 0, 0, (sourceTransform.rotation / Math.PI) * 180)
+        : sourceTransform.rotation;
       return rot;
     }
     return this._rotation;

@@ -1,32 +1,13 @@
 import "reflect-metadata";
 import { inject, injectable } from "inversify";
-import { PhysicsComponentFactory } from "./components/factory/physicsComponentFactory";
 import { SceneObject } from "./sceneObject";
-import { Point2 } from "./point";
-import { ModelComponentFactory } from "./components/factory/modelComponentFactory";
 import { ComponentFactoryFactory } from "./components/factory/factoryFactory";
-import { GenericComponentFactory } from "./components/factory/genericComponentFactory";
-import { TransformComponent } from "./components/transform";
-import { RendererComponentFactory } from "./components/factory/rendererComponentFactory";
-import { BasicMaterial } from "./rendering/basicMaterial";
 
 @injectable()
 export class Scene {
   constructor(
-    @inject(PhysicsComponentFactory)
-    private physicsComponentFactory: PhysicsComponentFactory,
-
-    @inject(ModelComponentFactory)
-    private modelComponentFactory: ModelComponentFactory,
-
-    @inject(GenericComponentFactory)
-    private genericComponentFactory: GenericComponentFactory,
-
     @inject(ComponentFactoryFactory)
-    private componentFactoryFactory: ComponentFactoryFactory,
-
-    @inject(RendererComponentFactory)
-    private rendererComponentFactory: RendererComponentFactory
+    private componentFactoryFactory: ComponentFactoryFactory
   ) {}
 
   objects: SceneObject[] = [];
@@ -68,41 +49,5 @@ export class Scene {
         this.objects.push(object);
       });
     }
-  }
-
-  createBox2D({ position, rotation }: { position: Point2; rotation: number }) {
-    const obj = this.create();
-
-    const cubeModelComponent = this.modelComponentFactory.createComponent(obj, {
-      modelName: "cube",
-    });
-    obj.components.push(cubeModelComponent);
-
-    const physicsComponent = this.physicsComponentFactory.createComponent(obj, {
-      sideLength: 1,
-      position,
-      rotation,
-    });
-    obj.components.push(physicsComponent);
-
-    const transformComponent = this.genericComponentFactory.createComponent(
-      obj,
-      TransformComponent,
-      {
-        position,
-        rotation,
-      }
-    );
-    obj.components.push(transformComponent);
-
-    const rendererComponent = this.rendererComponentFactory.createComponent(
-      obj,
-      {
-        material: new BasicMaterial(obj),
-      }
-    );
-    obj.components.push(rendererComponent);
-
-    this.save();
   }
 }

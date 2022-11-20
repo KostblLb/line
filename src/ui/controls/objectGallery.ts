@@ -36,13 +36,17 @@ export class ObjectGallery extends PCustomElement {
   }
 
   private async loadObjects() {
-    const objects = await Promise.resolve([{ name: "cube" }]);
+    const objects = await Promise.resolve([
+      { name: "cube" },
+      { name: "sphere" },
+    ]);
 
     this.listContainer.append(...objects.map((obj) => this.makeListItem(obj)));
   }
 
   private makeListItem(obj: { name: string }) {
     const listItem = document.createElement("div");
+    listItem.style.cursor = "pointer"; // TODO add css
     listItem.textContent = obj.name;
     listItem.onclick = () => this.onSelectListItem(obj);
     return listItem;

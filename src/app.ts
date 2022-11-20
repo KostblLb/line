@@ -11,6 +11,8 @@ import {
 } from "./ui/controls/cameraSliders";
 import { ObjectGallery } from "./ui/controls/objectGallery";
 import { SceneRendererLifecycle } from "./lib/lifecycle/sceneRenderer";
+import { CreateBoxSceneExtension } from "./lib/sceneExtensions/createBox";
+import { CreateSphereSceneExtension } from "./lib/sceneExtensions/createSphere";
 
 console.log(Canvas);
 
@@ -22,8 +24,14 @@ export class App extends HTMLElement {
 
   constructor(
     @inject(Scene) private scene: Scene,
+
     @inject(SceneRendererLifecycle)
-    private sceneRenderer: SceneRendererLifecycle
+    private sceneRenderer: SceneRendererLifecycle,
+
+    @inject(CreateBoxSceneExtension) private createBox: CreateBoxSceneExtension,
+
+    @inject(CreateSphereSceneExtension)
+    private createSphere: CreateSphereSceneExtension
   ) {
     super();
 
@@ -40,14 +48,27 @@ export class App extends HTMLElement {
     gallery.addEventListener(ObjectGallery.SELECT_OBJECT_EVENT, ((
       event: CustomEvent<Model>
     ) => {
-      if (event.detail.name === "cube") {
-        this.scene.createBox2D({
-          position: {
-            x: Math.random() * 10 - 5,
-            y: Math.random() * 10 - 5,
-          },
-          rotation: 1,
-        });
+      switch (event.detail.name) {
+        case "cube": {
+          this.createBox.createBox({
+            position: {
+              x: Math.random() * 10 - 5,
+              y: Math.random() * 10 - 5,
+            },
+            rotation: 1,
+          });
+          break;
+        }
+        case "sphere": {
+          this.createSphere.createSphere({
+            position: {
+              x: Math.random() * 10 - 5,
+              y: Math.random() * 10 - 5,
+            },
+            rotation: 1,
+          });
+          break;
+        }
       }
     }) as EventListener);
 

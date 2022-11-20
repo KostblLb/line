@@ -11,6 +11,10 @@ export class SceneObject {
     Reflect.set(this, "uid", uid);
   }
 
+  findComponent(predicate: (component: Component) => boolean) {
+    return this.components.find((c) => predicate(c));
+  }
+
   findComponentByUid(uid: string) {
     return this.components.find((comp) => comp.uid === uid);
   }

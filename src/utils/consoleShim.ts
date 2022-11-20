@@ -4,11 +4,8 @@ const oldConsole = globalThis.console;
 
 export const console = {
   ...oldConsole,
-  error: function () {
-    sendDiagnosticData({
-      type: "error",
-      data: JSON.stringify(arguments),
-    });
+  error: function (error: any) {
+    sendDiagnosticData(error instanceof Error ? error : new Error(error));
     oldConsole.error.apply(this, arguments as any);
   },
 };

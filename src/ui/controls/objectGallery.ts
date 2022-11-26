@@ -39,6 +39,7 @@ export class ObjectGallery extends PCustomElement {
     const objects = await Promise.resolve([
       { name: "cube" },
       { name: "sphere" },
+      { name: "gravitation" },
     ]);
 
     this.listContainer.append(...objects.map((obj) => this.makeListItem(obj)));

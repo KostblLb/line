@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import { GenericComponentFactory } from "../components/factory/genericComponentFactory";
 import { ModelComponentFactory } from "../components/factory/modelComponentFactory";
-import { PhysicsDiskComponentFactory } from "../components/factory/physicsDiskComponentFactory";
+import { PhysicsBoxComponentFactory } from "../components/factory/physicsBoxComponentFactory";
 import { RendererComponentFactory } from "../components/factory/rendererComponentFactory";
 import { TransformComponent } from "../components/transform";
 import { Point2 } from "../point";
@@ -9,14 +9,14 @@ import { BasicMaterial } from "../rendering/basicMaterial";
 import { Scene } from "../scene";
 
 @injectable()
-export class CreateSphereSceneExtension {
+export class BoxCreator {
   constructor(
     @inject(Scene) private scene: Scene,
     @inject(RendererComponentFactory)
     private rendererComponentFactory: RendererComponentFactory,
 
-    @inject(PhysicsDiskComponentFactory)
-    private physicsDiskComponentFactory: PhysicsDiskComponentFactory,
+    @inject(PhysicsBoxComponentFactory)
+    private physicsComponentFactory: PhysicsBoxComponentFactory,
 
     @inject(ModelComponentFactory)
     private modelComponentFactory: ModelComponentFactory,
@@ -24,22 +24,19 @@ export class CreateSphereSceneExtension {
     @inject(GenericComponentFactory)
     private genericComponentFactory: GenericComponentFactory
   ) {}
-  createSphere({ position, rotation }: { position: Point2; rotation: number }) {
+  createBox({ position, rotation }: { position: Point2; rotation: number }) {
     const obj = this.scene.create();
 
     const cubeModelComponent = this.modelComponentFactory.createComponent(obj, {
-      modelName: "sphere",
+      modelName: "cube",
     });
     obj.components.push(cubeModelComponent);
 
-    const physicsComponent = this.physicsDiskComponentFactory.createComponent(
-      obj,
-      {
-        radius: 1,
-        position,
-        rotation,
-      }
-    );
+    const physicsComponent = this.physicsComponentFactory.createComponent(obj, {
+      sideLength: 1,
+      position,
+      rotation,
+    });
     obj.components.push(physicsComponent);
 
     const transformComponent = this.genericComponentFactory.createComponent(

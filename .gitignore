@@ -2,3 +2,4 @@
 /dist
 /.vscode
 tsconfig.tsbuildinfo
+.DS_Store

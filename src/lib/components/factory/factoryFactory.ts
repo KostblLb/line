@@ -9,6 +9,8 @@ import { RendererComponentFactory } from "./rendererComponentFactory";
 import { RendererComponent } from "../renderer";
 import { PhysicsDiskComponentFactory } from "./physicsDiskComponentFactory";
 import { PhysicsDiskComponent } from "../physicsDisk";
+import { GravitationComponentFactory } from "./gravitationComponentFactory";
+import { GravitationComponent } from "../gravitation";
 
 @injectable()
 export class ComponentFactoryFactory {
@@ -19,7 +21,10 @@ export class ComponentFactoryFactory {
     private physicsDisk: PhysicsDiskComponentFactory,
     @inject(ModelComponentFactory) private model: ModelComponentFactory,
     @inject(GenericComponentFactory) private generic: GenericComponentFactory,
-    @inject(RendererComponentFactory) private renderer: RendererComponentFactory
+    @inject(RendererComponentFactory)
+    private renderer: RendererComponentFactory,
+    @inject(GravitationComponentFactory)
+    private gravitation: GravitationComponentFactory
   ) {}
 
   getFactory(componentName: string) {
@@ -29,6 +34,7 @@ export class ComponentFactoryFactory {
         [PhysicsBox2DComponent.Name]: this.physicsBox,
         [RendererComponent.Name]: this.renderer,
         [PhysicsDiskComponent.Name]: this.physicsDisk,
+        [GravitationComponent.Name]: this.gravitation,
       }[componentName] ?? this.generic
     );
   }

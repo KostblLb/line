@@ -11,8 +11,9 @@ import {
 } from "./ui/controls/cameraSliders";
 import { ObjectGallery } from "./ui/controls/objectGallery";
 import { SceneRendererLifecycle } from "./lib/lifecycle/sceneRenderer";
-import { CreateBoxSceneExtension } from "./lib/sceneExtensions/createBox";
-import { CreateSphereSceneExtension } from "./lib/sceneExtensions/createSphere";
+import { BoxCreator } from "./lib/creators/boxCreator";
+import { SphereCreator } from "./lib/creators/sphereCreator";
+import { GravitationCreator } from "./lib/creators/gravitationCreator";
 
 console.log(Canvas);
 
@@ -28,10 +29,13 @@ export class App extends HTMLElement {
     @inject(SceneRendererLifecycle)
     private sceneRenderer: SceneRendererLifecycle,
 
-    @inject(CreateBoxSceneExtension) private createBox: CreateBoxSceneExtension,
+    @inject(BoxCreator) private createBox: BoxCreator,
 
-    @inject(CreateSphereSceneExtension)
-    private createSphere: CreateSphereSceneExtension
+    @inject(SphereCreator)
+    private createSphere: SphereCreator,
+
+    @inject(GravitationCreator)
+    private gravitationCreator: GravitationCreator
   ) {
     super();
 
@@ -68,6 +72,9 @@ export class App extends HTMLElement {
             rotation: 1,
           });
           break;
+        }
+        case "gravitation": {
+          this.gravitationCreator.create();
         }
       }
     }) as EventListener);

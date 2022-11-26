@@ -14,3 +14,11 @@ export const isTransformSource = (
     typeof component.transform === "function"
   );
 };
+
+export interface IStepper {
+  step(deltaMs: number): void;
+}
+
+export const isStepper = (component: any): component is IStepper => {
+  return typeof component.step === "function";
+};

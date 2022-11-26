@@ -36,7 +36,7 @@ const options: BuildOptions = {
   watch: !!process.env.WATCH,
   target: "esnext",
   outfile: "./dist/bundle.js",
-  minify: true,
+  minify: false,
   keepNames: true,
   bundle: true,
   define: {
